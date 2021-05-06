@@ -1,59 +1,106 @@
 {% extends 'base.html' %}
 
+{% block title %} Home {% endblock %}
+
 {% block content %}
         <!-- Page content-->
         <div class="container">
             <div class="row">
                 <!-- Blog entries-->
+                {% if user.is_authenticated %}
                 <div class="col-md-8">
                     <h1 class="my-4">
-                        Page Heading
-                        <small>Secondary Text</small>
+                        <h2>Comenta algo que quieras publicar...</h2>
                     </h1>
                     <!-- Blog post-->
                     <div class="card mb-4">
-                        <img class="card-img-top" src="https://via.placeholder.com/750x300" alt="Card image cap" />
-                        <div class="card-body">
-                            <h2 class="card-title">Post Title</h2>
-                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
-                            <a class="btn btn-primary" href="#!">Read More →</a>
-                        </div>
-                        <div class="card-footer text-muted">
-                            Posted on January 1, 2021 by
-                            <a href="#!">Start Bootstrap</a>
-                        </div>
+                        <form action="{% url 'home' %}" method="POST">
+                            {% csrf_token %}
+                        <textarea class="form-control" rows="2" placeholder="What are you thinking?"></textarea>
+                            <div class="mar-top clearfix">
+                                <a class="btn btn-trans btn-icon fa fa-video-camera add-tooltip" href="#"></a>
+                                <a class="btn btn-trans btn-icon fa fa-camera add-tooltip" href="#"></a>
+                                <a class="btn btn-trans btn-icon fa fa-file add-tooltip" href="#"></a>
+                                <button class="btn btn-sm btn-secondary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Publicar</button>
+                            </div>
+                        </form>
                     </div>
+                    <hr>
+                    <br>
+                {% else %}
+                <div class="col-md-8">
+                    <h1 class="my-4">
+                        <h2>Inicia sesión para empezar a compartir tus ideas</h2>
+                    </h1>
                     <!-- Blog post-->
                     <div class="card mb-4">
-                        <img class="card-img-top" src="https://via.placeholder.com/750x300" alt="Card image cap" />
-                        <div class="card-body">
-                            <h2 class="card-title">Post Title</h2>
-                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
-                            <a class="btn btn-primary" href="#!">Read More →</a>
-                        </div>
-                        <div class="card-footer text-muted">
-                            Posted on January 1, 2021 by
-                            <a href="#!">Start Bootstrap</a>
-                        </div>
                     </div>
+                {% endif %}
+                    {% for post in posts %}
                     <!-- Blog post-->
                     <div class="card mb-4">
-                        <img class="card-img-top" src="https://via.placeholder.com/750x300" alt="Card image cap" />
+                        {% if post.image %}
+                        <a href="{{ post.image.url }}" class="hidden">
+                            <img class="hidden" src="{{ post.image.url }}" style="width: 100%; height: auto;">
+                        </a>
                         <div class="card-body">
-                            <h2 class="card-title">Post Title</h2>
-                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
-                            <a class="btn btn-primary" href="#!">Read More →</a>
+                            <h2 class="card-title"><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
+                            <p class="card-text">{{ post.content }}</p>
+                            <a class="btn btn-secondary" href="{% url 'post_detail' post.id %}">Read More →</a>
                         </div>
                         <div class="card-footer text-muted">
-                            Posted on January 1, 2021 by
-                            <a href="#!">Start Bootstrap</a>
+                            Posted on {{ post.publish_date }} by
+                            <a href="#!">{{ post.user }}</a>
                         </div>
+                        {% else %}
+                        <div class="card-body">
+                            <h2 class="card-title">{{ post.title }}</h2>
+                            <p class="card-text">{{ post.content }}</p>
+                            <a class="btn btn-secondary" href="{% url 'post_detail' post.id %}">Read More →</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            Posted on {{ post.publish_date }} by
+                            <a href="#!">{{ post.user }}</a>
+                        </div>
+                        {% endif %}
                     </div>
-                    <!-- Pagination-->
-                    <ul class="pagination justify-content-center mb-4">
-                        <li class="page-item"><a class="page-link" href="#!">← Older</a></li>
-                        <li class="page-item disabled"><a class="page-link" href="#!">Newer →</a></li>
-                    </ul>
+                    {% endfor %}
+                    <!-- Page navigation start -->
+                    <div class="pagination-box p-box-2 text-center">
+                        <nav aria-label="Page navigation example">
+                            {% if posts.has_other_pages %}
+                            <ul class="pagination justify-content-center mb-4">
+                                {% if posts.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts.previous_page_number }}"><i class="fa fa-angle-left"></i></a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link"><i class="fa fa-angle-left"></i></a>
+                                </li>
+                                {% endif %}
+
+                            {% for npage in posts.paginator.page_range %}
+                                {% if posts.number == npage %}
+                                <li class="page-item"><a class="page-link active" href="#">{{ npage }}</a></li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ npage }}">{{ npage }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if posts.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts.next_page_number }}"><i class="fa fa-angle-right"></i></a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link"><i class="fa fa-angle-right"></i></a>
+                                </li>
+                            {% endif %}
+                            </ul>
+                            {% endif %}
+                        </nav>
+                    </div>
                 </div>
                 <!-- Side widgets-->
                 <div class="col-md-4">
@@ -61,10 +108,12 @@
                     <div class="card my-4">
                         <h5 class="card-header">Search</h5>
                         <div class="card-body">
-                            <div class="input-group">
-                                <input class="form-control" type="text" placeholder="Search for..." />
-                                <span class="input-group-append"><button class="btn btn-secondary" type="button">Go!</button></span>
-                            </div>
+                            <form action="{% url 'search' %}">
+                                <div class="input-group">
+                                    <input class="form-control" type="search" placeholder="Search for..." name="keyword" />
+                                    <span class="input-group-append"><button class="btn btn-secondary" type="submit">Go!</button></span>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <!-- Categories widget-->

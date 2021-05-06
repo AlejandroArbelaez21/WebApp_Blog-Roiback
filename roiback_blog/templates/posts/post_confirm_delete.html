@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h2>Seguro que quieres borrar este post?</h2>
+        <h3>Selecciona la razón por la cual deseas eliminar este post:</h3>
+        <form action="{% url 'home' %}" method="POST" name="login">
+            <input type="radio" id="delete-1" value="delete-1">
+            <label>Contenido no deseado</label><br>
+            <input type="radio" id="delete-2" value="delete-2">
+            <label>Contenido sospechoso o Spam</label><br>
+            <input type="radio" id="delete-3" name="gender" value="other">
+            <label>Muestra un contenido sensitivo</label><br>
+            <input type="radio" id="delete-4" name="gender" value="other">
+            <label>Contenido con intenciones suicidas</label><br>
+            <input type="radio" id="delete-5" value="delete-9">
+            <label>Contenido duplicado</label><br>
+            <input type="radio" id="delete-6" value="delete-9">
+            <label>Contenido Erroneo</label><br>
+            <input type="radio" id="delete-7" value="delete-7">
+            <label>Acoso</label><br>
+            <input type="radio" id="delete-8" value="delete-8">
+            <label>Violencia</label><br>
+            <input type="radio" id="delete-9" value="delete-9">
+            <label>Bullying</label><br>
+            <input type="radio" id="other" name="other" value="other">
+            <label for="other">Other</label><br>
+                <input type="text" id="fname" value="" placeholder="Explica cual?"><br><br>
+            {% csrf_token %}
+            <button class="btn btn-secondary mb-2" type="submit">Confirmar</button>
+        </form>
+    </div>
+
+{% endblock %}

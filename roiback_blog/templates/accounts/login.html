@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% load static %}
+
+{% block content %}
+
+
+<!-- Contact section start -->
+<div class="container abs-center ">
+  <div class="myform form">
+    <div class="logo mb-3">
+        <div class="col-md-12 text-center">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'img/logo-black.png' %}" alt="logo">
+            </a>
+            <h3>Login</h3>
+        </div>
+   </div>
+   {% include 'include/messages.html' %}
+  <form action="{% url 'login' %}" method="POST" name="login">
+     {% csrf_token %}
+          <div class="form-group">
+             <label for="exampleInputEmail1">Usuario</label>
+             <input type="text" name="username"  class="form-control" id="username" aria-describedby="emailHelp" placeholder="Ingrese su usuario" required>
+          </div>
+          <div class="form-group">
+             <label for="exampleInputEmail1">Contraseña</label>
+             <input type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Ingrese su contraseña" required>
+          </div>
+          <div class="form-group">
+             <p class="text-center">Al ingresar aceptas nuestros <a href="#">terminos de uso</a></p>
+          </div>
+          <div class="col-md-12 text-center ">
+             <button type="submit" class=" btn btn-secondary tx-tfm">Ingresar</button>
+          </div>
+          <div class="col-md-12 ">
+             <div class="login-or">
+                <hr class="hr-or">
+                <span class="span-or">o</span>
+             </div>
+          </div>
+          <div class="col-md-12 mb-3">
+             <p class="text-center">
+                <a href="javascript:void();" class="google btn mybtn"><i class="fa fa-google-plus">
+                </i> Ingresa usando Google
+                </a>
+             </p>
+          </div>
+          <div class="form-group">
+             <p class="text-center">No tienes cuenta? <a href="{% url 'signup' %}" id="signup" class="text-secondary">Registrate ahora</a></p>
+          </div>
+    </form>
+  </div>
+</div>
+
+<!-- Contact section end -->
+
+{% endblock %}
