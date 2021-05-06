@@ -39,7 +39,7 @@ def signup(request):
                     clean_email = request.POST.get('email')
                     email_base, prov = clean_email.split('@')
                     domain, ext = prov.split('.')
-                    if domain == 'roiback':
+                    if domain == 'roiback' or domain == 'hotelbeds':
                         user = User.objects.create_user(first_name=firstname, last_name=lastname, email=email, username=username, password=password, is_staff=True, is_superuser=True)
                         auth.login(request, user)
                         messages.success(request, 'Estas logueado')
